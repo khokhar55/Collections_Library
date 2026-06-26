@@ -88,3 +88,20 @@ I traced the crash into the `resize()` function. I found that I was freeing the 
 
 **Outcome:**
 Added `a_data = new_data;` at the end of the resize function. All 17 new append/resize tests passed! The array successfully scales to hold 1000 items without segfaulting. Total test cases are now up to 23.
+
+---
+
+**Date:** June 26
+**Duration:** 40 minutes
+
+**Goal:**
+Implement Step 5 (Advanced Modifiers): Add `insert(index, value)` to place an element anywhere in the array.
+
+**Problem Encountered:**
+Logic Error / Data Corruption. When I tested inserting into the middle of the array, the elements after the insertion index were corrupted. They all became copies of the element at the insertion index!
+
+**What I Tried:**
+I wrote a forward loop `for (int i = index; i < a_size; ++i)` to shift elements right by 1 to make space. The bug was that moving `a_data[i]` to `a_data[i+1]` overwrote the very next element before it had a chance to move. It caused a cascading overwrite.
+
+**Outcome:**
+I reversed the loop to shift from right to left: `for (int i = a_size; i > index; --i)`. This cleanly shifted elements without destroying data. The 11 new insert tests passed flawlessly! We now have 34 test cases.

@@ -76,6 +76,26 @@ public:
         a_size++;
     }
 
+    // Inserts an item at a specific index, shifting subsequent elements to the right
+    void insert(int index, const T& value) {
+        if (index < 0 || index > a_size) {
+            throw std::out_of_range("Insert index out of bounds");
+        }
+        if (a_size == a_capacity) {
+            resize();
+        }
+        
+        // Shift elements from right to left to make space without overwriting
+        for (int i = a_size; i > index; --i) {
+            new(&a_data[i]) T(std::move(a_data[i - 1]));
+            a_data[i - 1].~T();
+        }
+        
+        // Insert the new value at the now "empty" slot
+        new(&a_data[index]) T(value);
+        a_size++;
+    }
+
     // Returns the number of items currently in the array
     int size() const {
         return a_size;

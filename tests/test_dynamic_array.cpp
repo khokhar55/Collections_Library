@@ -123,6 +123,34 @@ void test_append_and_resize() {
     EXPECT_EQ(999, bigArr.get(999), "Last element is correct");
 }
 
+void test_insert() {
+    std::cout << "\n--- Testing Insert ---\n";
+    DynamicArray<int> arr;
+    arr.append(10);
+    arr.append(20);
+    arr.append(30);
+    
+    // Insert at front
+    arr.insert(0, 5); // Should become [5, 10, 20, 30]
+    EXPECT_EQ(4, arr.size(), "Size is 4 after insert front");
+    EXPECT_EQ(5, arr.get(0), "Element 0 is 5");
+    EXPECT_EQ(10, arr.get(1), "Element 1 is 10");
+    EXPECT_EQ(20, arr.get(2), "Element 2 is 20");
+    EXPECT_EQ(30, arr.get(3), "Element 3 is 30");
+    
+    // Insert in middle
+    arr.insert(2, 15); // Should become [5, 10, 15, 20, 30]
+    EXPECT_EQ(5, arr.size(), "Size is 5 after insert middle");
+    EXPECT_EQ(10, arr.get(1), "Element 1 is 10");
+    EXPECT_EQ(15, arr.get(2), "Element 2 is 15");
+    EXPECT_EQ(20, arr.get(3), "Element 3 is 20");
+    
+    // Insert at back (equivalent to append)
+    arr.insert(5, 35); // Should become [5, 10, 15, 20, 30, 35]
+    EXPECT_EQ(6, arr.size(), "Size is 6 after insert back");
+    EXPECT_EQ(35, arr.get(5), "Element 5 is 35");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
@@ -131,6 +159,7 @@ int main() {
     test_custom_capacity();
     test_element_access();
     test_append_and_resize();
+    test_insert();
     
     // Print Summary
     std::cout << "\n==============================\n";
