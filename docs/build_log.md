@@ -105,3 +105,20 @@ I wrote a forward loop `for (int i = index; i < a_size; ++i)` to shift elements 
 
 **Outcome:**
 I reversed the loop to shift from right to left: `for (int i = a_size; i > index; --i)`. This cleanly shifted elements without destroying data. The 11 new insert tests passed flawlessly! We now have 34 test cases.
+
+---
+
+**Date:** June 26
+**Duration:** 50 minutes
+
+**Goal:**
+Implement Step 6 (Modifiers): Implement `remove(index)` and `popBack()`.
+
+**Problem Encountered:**
+Logic Error / Unused Memory. After removing elements, I noticed that subsequent insertions or calls to `size()` were behaving as if the elements were never deleted! The tests explicitly failed because `size()` returned 5 when it should have been 4.
+
+**What I Tried:**
+I traced through the `remove()` logic. I had correctly shifted all the elements to the left and explicitly called the destructor on the last element (`a_data[a_size - 1].~T();`) to clean it up. However, I completely forgot to decrement `a_size`!
+
+**Outcome:**
+Added `a_size--;` at the end of both `remove()` and `popBack()`. This immediately fixed the logic, and all 11 new tests passed (including throwing an exception when popping an empty array). We are now at 45 test cases!

@@ -96,6 +96,33 @@ public:
         a_size++;
     }
 
+    // Removes an item at a specific index, shifting subsequent elements to the left
+    void remove(int index) {
+        if (index < 0 || index >= a_size) {
+            throw std::out_of_range("Remove index out of bounds");
+        }
+        
+        // Shift elements from right to left to fill the gap
+        for (int i = index; i < a_size - 1; ++i) {
+            a_data[i].~T(); // Destroy the old object
+            new(&a_data[i]) T(std::move(a_data[i + 1])); // Move next object into this slot
+        }
+        
+        // Destroy the very last element since it was moved left
+        a_data[a_size - 1].~T();
+        
+        a_size--; // FIXED: Correctly decrement the array size!
+    }
+
+    // Removes the last item in the array
+    void popBack() {
+        if (a_size == 0) {
+            throw std::out_of_range("Cannot pop from empty array");
+        }
+        a_data[a_size - 1].~T();
+        a_size--;
+    }
+
     // Returns the number of items currently in the array
     int size() const {
         return a_size;

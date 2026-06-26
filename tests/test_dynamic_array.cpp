@@ -151,6 +151,47 @@ void test_insert() {
     EXPECT_EQ(35, arr.get(5), "Element 5 is 35");
 }
 
+void test_remove_and_pop() {
+    std::cout << "\n--- Testing Remove & PopBack ---\n";
+    DynamicArray<int> arr;
+    arr.append(10);
+    arr.append(20);
+    arr.append(30);
+    arr.append(40);
+    arr.append(50); // [10, 20, 30, 40, 50]
+    
+    // Remove from middle
+    arr.remove(2); // Should remove 30 -> [10, 20, 40, 50]
+    EXPECT_EQ(4, arr.size(), "Size is 4 after middle remove");
+    EXPECT_EQ(10, arr.get(0), "Element 0 is 10");
+    EXPECT_EQ(20, arr.get(1), "Element 1 is 20");
+    EXPECT_EQ(40, arr.get(2), "Element 2 is 40");
+    EXPECT_EQ(50, arr.get(3), "Element 3 is 50");
+    
+    // Remove from front
+    arr.remove(0); // Should remove 10 -> [20, 40, 50]
+    EXPECT_EQ(3, arr.size(), "Size is 3 after front remove");
+    EXPECT_EQ(20, arr.get(0), "Element 0 is 20");
+    
+    // Test popBack
+    arr.popBack(); // Should remove 50 -> [20, 40]
+    EXPECT_EQ(2, arr.size(), "Size is 2 after popBack");
+    EXPECT_EQ(40, arr.get(1), "Element 1 is 40");
+    
+    // Pop until empty
+    arr.popBack();
+    arr.popBack();
+    EXPECT_EQ(0, arr.size(), "Size is 0 after popping all");
+    
+    bool exceptionThrown = false;
+    try {
+        arr.popBack();
+    } catch (const std::out_of_range& e) {
+        exceptionThrown = true;
+    }
+    EXPECT_TRUE(exceptionThrown, "popBack() throws out_of_range on empty array");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
@@ -160,6 +201,7 @@ int main() {
     test_element_access();
     test_append_and_resize();
     test_insert();
+    test_remove_and_pop();
     
     // Print Summary
     std::cout << "\n==============================\n";
