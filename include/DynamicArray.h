@@ -96,11 +96,48 @@ public:
         a_size = other.a_size;
         a_data = static_cast<T*>(std::malloc(a_capacity * sizeof(T)));
         
-        // At this point, if it was self-assignment, other.a_data was just freed!
-        // We will be copying garbage or causing a segfault.
+        // Deep copy the elements using placement new
         for (int i = 0; i < a_size; ++i) {
             new(&a_data[i]) T(other.a_data[i]);
         }
+        
+        return *this;
+    }
+
+    // Move Constructor: Steals the memory from a temporary/dying array
+    DynamicArray(DynamicArray&& other) noexcept {
+        // Steal the pointers and state
+        a_data = other.a_data;
+        a_size = other.a_size;
+        a_capacity = other.a_capacity;
+        
+        // FIXED: Reset 'other' so its destructor doesn't free our stolen memory!
+        other.a_data = nullptr;
+        other.a_size = 0;
+        other.a_capacity = 0;
+    }
+
+    // Move Assignment Operator: Steals the memory during assignment
+    DynamicArray& operator=(DynamicArray&& other) noexcept {
+        if (this == &other) {
+            return *this;
+        }
+
+        // Clean up our own memory first
+        for (int i = 0; i < a_size; ++i) {
+            a_data[i].~T();
+        }
+        std::free(a_data);
+        
+        // Steal the pointers and state
+        a_data = other.a_data;
+        a_size = other.a_size;
+        a_capacity = other.a_capacity;
+        
+        // FIXED: Reset 'other' so its destructor doesn't free our stolen memory!
+        other.a_data = nullptr;
+        other.a_size = 0;
+        other.a_capacity = 0;
         
         return *this;
     }

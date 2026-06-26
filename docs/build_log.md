@@ -156,3 +156,20 @@ I analyzed my `operator=` logic. My assignment operator was designed to first de
 
 **Outcome:**
 I added a simple self-assignment check (`if (this == &other) return *this;`) at the very top of `operator=`. This immediately solved the problem. The deep copy tests now pass, bringing our test count to 66!
+
+---
+
+**Date:** June 26
+**Duration:** 50 minutes
+
+**Goal:**
+Implement Step 9 (Rule of Five): Implement the Move Constructor and Move Assignment Operator (`&&`) to optimize performance by stealing pointers instead of deep copying.
+
+**Problem Encountered:**
+Double Free / Use After Free Error. The move semantics worked initially, but when the program shut down, it crashed with a fatal memory error.
+
+**What I Tried:**
+I traced the destructor calls. I realized that my move operations correctly "stole" the memory pointer (`a_data = other.a_data;`), but I completely forgot to set `other.a_data = nullptr;`. When the temporary `other` array went out of scope, its destructor called `std::free()` on its `a_data` pointer, which deleted the exact memory that I had just stolen!
+
+**Outcome:**
+I added `other.a_data = nullptr;`, `other.a_size = 0;`, and `other.a_capacity = 0;` to both move functions. This neutralizes the temporary object so its destructor does nothing. The tests now pass, and we have reached **74 test cases**.

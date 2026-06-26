@@ -258,6 +258,39 @@ void test_copy_semantics() {
     EXPECT_EQ(1, original[0], "Self-assigned array data is intact");
 }
 
+void test_move_semantics() {
+    std::cout << "\n--- Testing Move Semantics ---\n";
+    
+    DynamicArray<int> source1;
+    source1.append(100);
+    source1.append(200);
+    
+    // Test Move Constructor
+    DynamicArray<int> movedConstructed = std::move(source1);
+    EXPECT_EQ(2, movedConstructed.size(), "Move constructed array has correct size");
+    EXPECT_EQ(200, movedConstructed[1], "Move constructed array has correct data");
+    
+    // The source should now be completely empty and safe to destroy!
+    EXPECT_EQ(0, source1.size(), "Source array size is 0 after move construction");
+    EXPECT_EQ(0, source1.capacity(), "Source array capacity is 0 after move construction");
+    
+    DynamicArray<int> source2;
+    source2.append(300);
+    source2.append(400);
+    
+    // Test Move Assignment Operator
+    DynamicArray<int> movedAssigned;
+    movedAssigned.append(999); // Dummy data to be cleaned up
+    movedAssigned = std::move(source2);
+    
+    EXPECT_EQ(2, movedAssigned.size(), "Move assigned array has correct size");
+    EXPECT_EQ(400, movedAssigned[1], "Move assigned array has correct data");
+    
+    // The source2 should now be completely empty!
+    EXPECT_EQ(0, source2.size(), "Source array size is 0 after move assignment");
+    EXPECT_EQ(0, source2.capacity(), "Source array capacity is 0 after move assignment");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
@@ -270,6 +303,7 @@ int main() {
     test_remove_and_pop();
     test_search_and_clear();
     test_copy_semantics();
+    test_move_semantics();
     
     // Print Summary
     std::cout << "\n==============================\n";
