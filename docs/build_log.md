@@ -122,3 +122,20 @@ I traced through the `remove()` logic. I had correctly shifted all the elements 
 
 **Outcome:**
 Added `a_size--;` at the end of both `remove()` and `popBack()`. This immediately fixed the logic, and all 11 new tests passed (including throwing an exception when popping an empty array). We are now at 45 test cases!
+
+---
+
+**Date:** June 26
+**Duration:** 45 minutes
+
+**Goal:**
+Implement Step 7 (Search & Clear): Implement `contains()`, `indexOf()`, and `clear()`.
+
+**Problem Encountered:**
+Fatal Segmentation Fault. After calling `clear()`, the array would instantly crash the program the next time someone called `append()`. The test runner didn't even output a failure; the OS just killed the process.
+
+**What I Tried:**
+I realized I had written `std::free(a_data);` inside the `clear()` function. This is a severe misunderstanding of how capacity works. `clear()` is supposed to empty the *elements* (setting `a_size = 0`) but keep the *memory* (`a_capacity`) intact for future reuse. By freeing `a_data`, the next `append()` tried to write data into a deallocated, null pointer.
+
+**Outcome:**
+I removed `std::free(a_data)` and `a_data = nullptr` from `clear()`. It now simply loops to destroy the elements and sets `a_size = 0`. The tests now pass cleanly, and we officially reached **55 test cases**!

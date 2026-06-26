@@ -192,6 +192,36 @@ void test_remove_and_pop() {
     EXPECT_TRUE(exceptionThrown, "popBack() throws out_of_range on empty array");
 }
 
+void test_search_and_clear() {
+    std::cout << "\n--- Testing Search & Clear ---\n";
+    DynamicArray<int> arr;
+    arr.append(5);
+    arr.append(10);
+    arr.append(15);
+    arr.append(20);
+    
+    // Test indexOf
+    EXPECT_EQ(0, arr.indexOf(5), "indexOf(5) is 0");
+    EXPECT_EQ(3, arr.indexOf(20), "indexOf(20) is 3");
+    EXPECT_EQ(-1, arr.indexOf(99), "indexOf(99) is -1 (not found)");
+    
+    // Test contains
+    EXPECT_TRUE(arr.contains(15), "Array contains 15");
+    EXPECT_TRUE(!arr.contains(42), "Array does not contain 42");
+    
+    // Test clear
+    int oldCapacity = arr.capacity();
+    arr.clear();
+    EXPECT_EQ(0, arr.size(), "Size is 0 after clear");
+    EXPECT_EQ(oldCapacity, arr.capacity(), "Capacity remains unchanged after clear");
+    EXPECT_TRUE(arr.isEmpty(), "Array is empty after clear");
+    
+    // Verify we can still append after clearing
+    arr.append(100);
+    EXPECT_EQ(1, arr.size(), "Size is 1 after appending to cleared array");
+    EXPECT_EQ(100, arr.get(0), "Element 0 is 100");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
@@ -202,6 +232,7 @@ int main() {
     test_append_and_resize();
     test_insert();
     test_remove_and_pop();
+    test_search_and_clear();
     
     // Print Summary
     std::cout << "\n==============================\n";

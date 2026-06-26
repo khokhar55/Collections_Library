@@ -123,6 +123,35 @@ public:
         a_size--;
     }
 
+    // --- Search & Utility ---
+
+    // Returns the index of the first occurrence of the value, or -1 if not found
+    int indexOf(const T& value) const {
+        for (int i = 0; i < a_size; ++i) {
+            if (a_data[i] == value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    // Returns true if the value exists in the array
+    bool contains(const T& value) const {
+        return indexOf(value) != -1;
+    }
+
+    // Clears all elements from the array but keeps the capacity intact
+    void clear() {
+        for (int i = 0; i < a_size; ++i) {
+            a_data[i].~T();
+        }
+        a_size = 0;
+        
+        // FIXED: Do NOT free the memory!
+        // We leave a_data alone so that the capacity remains intact and 
+        // future append() calls don't crash.
+    }
+
     // Returns the number of items currently in the array
     int size() const {
         return a_size;
