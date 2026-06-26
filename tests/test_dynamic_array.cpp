@@ -78,6 +78,51 @@ void test_element_access() {
     EXPECT_TRUE(exceptionThrown, "get() throws out_of_range on empty array");
 }
 
+void test_append_and_resize() {
+    std::cout << "\n--- Testing Append & Resize ---\n";
+    DynamicArray<int> arr; // Initial capacity is 4
+    
+    // Test appending a single item
+    arr.append(10);
+    EXPECT_EQ(1, arr.size(), "Size is 1 after first append");
+    EXPECT_EQ(4, arr.capacity(), "Capacity is still 4");
+    EXPECT_EQ(10, arr.get(0), "Element 0 is 10 (via get)");
+    EXPECT_EQ(10, arr[0], "Element 0 is 10 (via operator[])");
+    
+    // Fill up to initial capacity (4)
+    arr.append(20);
+    arr.append(30);
+    arr.append(40);
+    EXPECT_EQ(4, arr.size(), "Size is 4 after 4 appends");
+    EXPECT_EQ(4, arr.capacity(), "Capacity is still 4");
+    EXPECT_EQ(40, arr.get(3), "Element 3 is 40");
+    
+    // Trigger the first resize (capacity should double to 8)
+    arr.append(50);
+    EXPECT_EQ(5, arr.size(), "Size is 5 after resize trigger");
+    EXPECT_EQ(8, arr.capacity(), "Capacity doubled to 8");
+    EXPECT_EQ(10, arr.get(0), "Element 0 is still 10 after resize");
+    EXPECT_EQ(50, arr.get(4), "Element 4 is 50");
+    
+    // Trigger another resize by appending up to 9 items
+    arr.append(60);
+    arr.append(70);
+    arr.append(80);
+    arr.append(90); // 9th item -> resize to 16
+    EXPECT_EQ(9, arr.size(), "Size is 9 after second resize trigger");
+    EXPECT_EQ(16, arr.capacity(), "Capacity doubled to 16");
+    EXPECT_EQ(90, arr.get(8), "Element 8 is 90");
+    
+    // Massive append to test large resizing
+    DynamicArray<int> bigArr;
+    for (int i = 0; i < 1000; ++i) {
+        bigArr.append(i);
+    }
+    EXPECT_EQ(1000, bigArr.size(), "Large array size is 1000");
+    EXPECT_EQ(1024, bigArr.capacity(), "Large array capacity is 1024 (2^10)");
+    EXPECT_EQ(999, bigArr.get(999), "Last element is correct");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
@@ -85,6 +130,7 @@ int main() {
     test_initial_state();
     test_custom_capacity();
     test_element_access();
+    test_append_and_resize();
     
     // Print Summary
     std::cout << "\n==============================\n";

@@ -64,10 +64,27 @@ I added `a_capacity = customCapacity;` to the constructor. The tests successfull
 Implement Step 3 (Element Access): Methods `get(index)` and `operator[](index)` to read and write to the array.
 
 **Problem Encountered:**
-No major bugs. I successfully implemented `std::out_of_range` bounds checking for `get()`, while keeping `operator[]` raw for maximum performance.
+Compilation error: `lvalue required as left operand of assignment`. I was trying to test modifying an element (e.g., `arr[0] = 5;`), but the compiler rejected it.
 
 **What I Tried:**
-Added a test case to explicitly check that calling `get(0)` on a newly constructed, empty array correctly throws an exception instead of returning uninitialized memory.
+I realized I had written the method signature as `T operator[](int index)` instead of `T& operator[](int index)`. By returning by value instead of by reference, the array was handing back a copy of the item, making it impossible to modify the actual stored memory. 
 
 **Outcome:**
-The test caught the exception exactly as designed, meaning our bounds checking logic is solid and safe.
+I changed the return types to `T&` (reference), which immediately fixed the compiler error and allowed writing to the array. The bounds-checking exception for `get()` also passed perfectly.
+
+---
+
+**Date:** June 26
+**Duration:** 25 minutes
+
+**Goal:**
+Implement Step 4 (Core Modifiers): Implement `append(value)` and the automatic `resize()` logic using placement new.
+
+**Problem Encountered:**
+Segmentation fault (core dumped) when running the massive append test (1000 items). The array would successfully append 4 items, but crashed exactly on the 5th item when the first resize triggered.
+
+**What I Tried:**
+I traced the crash into the `resize()` function. I found that I was freeing the old memory (`std::free(a_data);`) but I completely forgot to update the pointer! I was missing the line `a_data = new_data;`. As a result, the array kept trying to write to memory that had just been handed back to the OS.
+
+**Outcome:**
+Added `a_data = new_data;` at the end of the resize function. All 17 new append/resize tests passed! The array successfully scales to hold 1000 items without segfaulting. Total test cases are now up to 23.

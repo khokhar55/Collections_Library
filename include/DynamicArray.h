@@ -1,8 +1,10 @@
 #ifndef DYNAMIC_ARRAY_H
 #define DYNAMIC_ARRAY_H
 
-#include <cstdlib> // Required for std::malloc and std::free
+#include <cstdlib>   // Required for std::malloc and std::free
 #include <stdexcept> // Required for std::out_of_range
+#include <new>       // Required for placement new
+#include <utility>   // Required for std::move
 
 template <typename T>
 class DynamicArray {
@@ -10,6 +12,26 @@ private:
     T* a_data;      // Pointer to the start of our raw heap memory
     int a_size;     // How many items are actually currently stored
     int a_capacity; // Total number of memory slots allocated before we need to resize
+
+    // Private helper: doubles the capacity and moves elements to a new memory block
+    void resize() {
+        a_capacity *= 2;
+        T* new_data = static_cast<T*>(std::malloc(a_capacity * sizeof(T)));
+        
+        // Move existing elements to the new block
+        for (int i = 0; i < a_size; ++i) {
+            // Placement new: construct a new T at the specific memory address new_data[i]
+            // We use std::move to efficiently transfer ownership without copying (if T supports it)
+            new(&new_data[i]) T(std::move(a_data[i]));
+            
+            // Explicitly call the destructor on the old object since it was moved from
+            a_data[i].~T();
+        }
+        
+        // Free the old raw memory block
+        std::free(a_data);
+        a_data = new_data;
+    }
 
 public:
     // Default constructor: creates an empty array with space for 4 items
@@ -34,8 +56,24 @@ public:
 
     // Destructor: cleans up the heap memory when the array goes out of scope
     ~DynamicArray() {
+        // Destroy all alive objects
+        for (int i = 0; i < a_size; ++i) {
+            a_data[i].~T();
+        }
         // Free the raw memory block allocated by malloc
         std::free(a_data);
+    }
+
+    // --- Modifiers ---
+
+    // Appends an item to the end of the array, resizing if necessary
+    void append(const T& value) {
+        if (a_size == a_capacity) {
+            resize();
+        }
+        // Construct the object in the pre-allocated uninitialized memory slot
+        new(&a_data[a_size]) T(value);
+        a_size++;
     }
 
     // Returns the number of items currently in the array
