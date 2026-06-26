@@ -291,6 +291,32 @@ void test_move_semantics() {
     EXPECT_EQ(0, source2.capacity(), "Source array capacity is 0 after move assignment");
 }
 
+void test_iterators() {
+    std::cout << "\n--- Testing Iterators & Range Constructor ---\n";
+    DynamicArray<int> arr;
+    arr.append(10);
+    arr.append(20);
+    arr.append(30);
+    
+    // Test Range-based for loop (relies on begin() and end())
+    int sum = 0;
+    for (int val : arr) {
+        sum += val;
+    }
+    EXPECT_EQ(60, sum, "Range-based for loop successfully iterated and summed elements");
+    
+    // Test manual iterator usage
+    DynamicArray<int>::Iterator it = arr.begin();
+    EXPECT_EQ(10, *it, "begin() points to first element");
+    
+    // Test Range Constructor
+    // This will trigger the crash because the range constructor is buggy!
+    DynamicArray<int> fromRange(arr.begin(), arr.end());
+    EXPECT_EQ(3, fromRange.size(), "Range constructed array has size 3");
+    EXPECT_EQ(10, fromRange[0], "Range constructed element 0 is 10");
+    EXPECT_EQ(30, fromRange[2], "Range constructed element 2 is 30");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
@@ -304,6 +330,7 @@ int main() {
     test_search_and_clear();
     test_copy_semantics();
     test_move_semantics();
+    test_iterators();
     
     // Print Summary
     std::cout << "\n==============================\n";

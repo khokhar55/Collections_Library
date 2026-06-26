@@ -54,6 +54,19 @@ public:
         a_data = static_cast<T*>(std::malloc(a_capacity * sizeof(T)));
     }
 
+    // Range-based constructor: creates an array from a range of iterators
+    template <typename InputIt>
+    DynamicArray(InputIt first, InputIt last) {
+        // FIXED: Must initialize the array state before we can append to it!
+        a_capacity = 4;
+        a_size = 0;
+        a_data = static_cast<T*>(std::malloc(a_capacity * sizeof(T)));
+
+        for (auto it = first; it != last; ++it) {
+            append(*it);
+        }
+    }
+
     // Destructor: cleans up the heap memory when the array goes out of scope
     ~DynamicArray() {
         // Destroy all alive objects
@@ -228,6 +241,28 @@ public:
         // FIXED: Do NOT free the memory!
         // We leave a_data alone so that the capacity remains intact and 
         // future append() calls don't crash.
+    }
+
+    // --- Iterators ---
+    
+    // We can define our iterators directly as raw pointers, since the memory is contiguous!
+    using Iterator = T*;
+    using ConstIterator = const T*;
+
+    Iterator begin() {
+        return a_data;
+    }
+
+    Iterator end() {
+        return a_data + a_size;
+    }
+
+    ConstIterator begin() const {
+        return a_data;
+    }
+
+    ConstIterator end() const {
+        return a_data + a_size;
     }
 
     // Returns the number of items currently in the array

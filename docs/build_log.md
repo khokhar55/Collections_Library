@@ -173,3 +173,20 @@ I traced the destructor calls. I realized that my move operations correctly "sto
 
 **Outcome:**
 I added `other.a_data = nullptr;`, `other.a_size = 0;`, and `other.a_capacity = 0;` to both move functions. This neutralizes the temporary object so its destructor does nothing. The tests now pass, and we have reached **74 test cases**.
+
+---
+
+**Date:** June 26
+**Duration:** 50 minutes
+
+**Goal:**
+Implement Step 10 (Iterators & Range Constructor): Add `begin()`, `end()`, and a constructor to build the array from a range of iterators.
+
+**Problem Encountered:**
+Uninitialized Memory Read / Immediate Crash. When I tested the range constructor (`DynamicArray<int> fromRange(arr.begin(), arr.end());`), the test crashed immediately with a segmentation fault.
+
+**What I Tried:**
+I looked at my range constructor. I had simply written a loop: `for (auto it = first; it != last; ++it) { append(*it); }`. I forgot that `append()` relies on `a_size`, `a_capacity`, and `a_data` being initialized! Because they were completely uninitialized (garbage memory), `append()` tried to write data into a wild pointer.
+
+**Outcome:**
+I added the necessary initialization lines (`a_capacity = 4; a_size = 0; a_data = malloc(...)`) to the top of the range constructor before the loop. The range constructor and the C++ range-based for-loop (`for (int val : arr)`) now work perfectly. We are up to **79 test cases**!
