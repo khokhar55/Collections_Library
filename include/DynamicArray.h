@@ -2,6 +2,7 @@
 #define DYNAMIC_ARRAY_H
 
 #include <cstdlib> // Required for std::malloc and std::free
+#include <stdexcept> // Required for std::out_of_range
 
 template <typename T>
 class DynamicArray {
@@ -50,6 +51,32 @@ public:
     // Returns true if there are no items in the array
     bool isEmpty() const {
         return a_size == 0;
+    }
+
+    // Element Access: Bounds-checked access
+    // Throws an exception if the index is out of bounds
+    T& get(int index) {
+        if (index < 0 || index >= a_size) {
+            throw std::out_of_range("Index out of bounds");
+        }
+        return a_data[index];
+    }
+
+    // Element Access: Bounds-checked access (const version for read-only arrays)
+    const T& get(int index) const {
+        if (index < 0 || index >= a_size) {
+            throw std::out_of_range("Index out of bounds");
+        }
+        return a_data[index];
+    }
+
+    // Element Access: Direct access for maximum speed (no bounds checking)
+    T& operator[](int index) {
+        return a_data[index];
+    }
+
+    const T& operator[](int index) const {
+        return a_data[index];
     }
 };
 

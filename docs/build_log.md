@@ -54,3 +54,20 @@ I analyzed the compiler warning (`unused parameter 'customCapacity'`) and the te
 
 **Outcome:**
 I added `a_capacity = customCapacity;` to the constructor. The tests successfully compiled and passed, proving the memory allocation now matches the requested capacity.
+
+---
+
+**Date:** June 26
+**Duration:** 10 minutes
+
+**Goal:**
+Implement Step 3 (Element Access): Methods `get(index)` and `operator[](index)` to read and write to the array.
+
+**Problem Encountered:**
+No major bugs. I successfully implemented `std::out_of_range` bounds checking for `get()`, while keeping `operator[]` raw for maximum performance.
+
+**What I Tried:**
+Added a test case to explicitly check that calling `get(0)` on a newly constructed, empty array correctly throws an exception instead of returning uninitialized memory.
+
+**Outcome:**
+The test caught the exception exactly as designed, meaning our bounds checking logic is solid and safe.

@@ -64,12 +64,27 @@ void test_custom_capacity() {
     EXPECT_EQ(100, arr.capacity(), "Custom capacity is 100");
 }
 
+void test_element_access() {
+    std::cout << "\n--- Testing Element Access ---\n";
+    DynamicArray<int> arr; // Empty array (size = 0)
+    
+    // Attempting to get an element out of bounds should throw std::out_of_range
+    bool exceptionThrown = false;
+    try {
+        arr.get(0);
+    } catch (const std::out_of_range& e) {
+        exceptionThrown = true;
+    }
+    EXPECT_TRUE(exceptionThrown, "get() throws out_of_range on empty array");
+}
+
 int main() {
     std::cout << "Starting DynamicArray Tests...\n";
     
     // Run the tests
     test_initial_state();
     test_custom_capacity();
+    test_element_access();
     
     // Print Summary
     std::cout << "\n==============================\n";
