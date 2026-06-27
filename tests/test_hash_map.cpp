@@ -99,6 +99,60 @@ void test_resize() {
     EXPECT_EQ(0, map.get("Key0"), "Can still get elements after resize");
 }
 
+void test_rule_of_zero() {
+    std::cout << "\n--- Testing Rule of Zero (Copy & Move) ---\n";
+    HashMap<std::string, int> original;
+    original.put("A", 1);
+    original.put("B", 2);
+
+    // Testing Copy Constructor
+    // This relies entirely on our custom DynamicArray and LinkedList deep copying!
+    HashMap<std::string, int> copied = original;
+    EXPECT_EQ(2, copied.size(), "Copied map has correct size");
+    EXPECT_EQ(1, copied.get("A"), "Copied map has correct data");
+    
+    // Modify copy, ensure original is unchanged
+    copied.put("A", 99);
+    EXPECT_EQ(1, original.get("A"), "Original map is unchanged (Deep Copy worked!)");
+
+    // Testing Move Constructor
+    HashMap<std::string, int> moved = std::move(original);
+    EXPECT_EQ(2, moved.size(), "Moved map has correct size");
+    EXPECT_EQ(2, moved.get("B"), "Moved map has correct data");
+}
+
+void test_bulk_operations() {
+    std::cout << "\n--- Testing Bulk Operations (Stress Test) ---\n";
+    HashMap<std::string, int> bulk;
+    
+    // Insert 50 elements
+    for (int i = 0; i < 50; ++i) {
+        bulk.put("Key" + std::to_string(i), i * 10);
+        EXPECT_EQ(i + 1, bulk.size(), "Bulk put size check");
+    }
+    
+    EXPECT_EQ(50, bulk.size(), "Total size is 50");
+    EXPECT_EQ(490, bulk.get("Key49"), "Last element is correct");
+    EXPECT_EQ(250, bulk.get("Key25"), "Middle element is correct");
+
+    // Remove 25 elements
+    for (int i = 0; i < 25; ++i) {
+        bulk.remove("Key" + std::to_string(i));
+        EXPECT_EQ(50 - i - 1, bulk.size(), "Bulk remove size check");
+    }
+    
+    EXPECT_EQ(25, bulk.size(), "Size is 25 after bulk remove");
+    
+    bool threw = false;
+    try {
+        bulk.get("Key0");
+    } catch (...) {
+        threw = true;
+    }
+    EXPECT_TRUE(threw, "Key0 is successfully removed");
+    EXPECT_EQ(250, bulk.get("Key25"), "Key25 is still present");
+}
+
 int main() {
     std::cout << "Starting HashMap Tests...\n";
     
@@ -107,6 +161,8 @@ int main() {
     test_put();
     test_get_and_remove();
     test_resize();
+    test_rule_of_zero();
+    test_bulk_operations();
     
     // Print Summary
     std::cout << "\n==============================\n";

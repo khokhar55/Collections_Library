@@ -326,3 +326,20 @@ I examined the `resize()` logic. I was correctly creating a new `DynamicArray` w
 
 **Outcome:**
 I simply added `current_size = 0;` inside `resize()` right before the rehashing loop. Since we are conceptually starting with a fresh, empty buckets array, we must reset the size counter and let `put()` naturally increment it back up as it inserts the items. Tests pass perfectly, 16 test cases!
+
+---
+
+**Date:** June 27
+**Duration:** 40 minutes
+
+**Goal:**
+Implement Step 9-10 (HashMap): Rule of Five Copy/Move Semantics and final stress tests.
+
+**Problem Encountered:**
+No bugs! In a fantastic turn of events, I realized that I didn't need to manually implement the Rule of Five for the HashMap!
+
+**What I Tried:**
+Because the `HashMap` is composed of `DynamicArray<LinkedList<KeyValuePair>>`, and both `DynamicArray` and `LinkedList` correctly implement deep-copy and move semantics, the compiler-generated default copy and move constructors for `HashMap` perfectly deep-copy everything automatically. This is a massive architectural win known as the **Rule of Zero**.
+
+**Outcome:**
+I wrote tests explicitly verifying deep-copies and moves, and they passed on the first try. I also added a 50-element bulk operation stress test. The HashMap is fully functional with a grand total of **102 test cases** passing perfectly! Day 2 coding is officially done.
