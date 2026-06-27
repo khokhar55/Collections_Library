@@ -292,3 +292,20 @@ I wrote a stress test inserting 50 items and verified that `size()`, `get()`, `c
 
 **Outcome:**
 The LinkedList is officially complete! We hit **82 test cases**, proving its robust memory management and logic. Moving on to Phase 2: HashMap.
+
+---
+
+**Date:** June 27
+**Duration:** 45 minutes
+
+**Goal:**
+Implement Step 1-2 (HashMap): Skeleton, Hashing, and `put(key, value)`.
+
+**Problem Encountered:**
+Logic Error / Duplication. When I tested inserting a new value for an existing key (`map.put("Alice", 26)`), the map's size incremented incorrectly.
+
+**What I Tried:**
+I analyzed my `put` logic. I was hashing the key, finding the `LinkedList` bucket, and unconditionally `append`ing the `KeyValuePair`. This caused duplicate keys in the same bucket!
+
+**Outcome:**
+Because our `LinkedList` now supports C++ iterators, I wrote a brilliant fix using `for (auto& pair : bucket)`. If the key matches, it updates the value in-place and returns early. The tests now pass, correctly avoiding duplicate insertions!
