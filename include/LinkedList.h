@@ -24,6 +24,30 @@ public:
     // Default constructor
     LinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
+    // Copy Constructor (Deep Copy)
+    LinkedList(const LinkedList& other) : head(nullptr), tail(nullptr), size(0) {
+        Node* current = other.head;
+        while (current != nullptr) {
+            append(current->data);
+            current = current->next;
+        }
+    }
+
+    // Copy Assignment Operator
+    LinkedList& operator=(const LinkedList& other) {
+        // FIXED: Added self-assignment check to prevent erasing our own data
+        if (this == &other) {
+            return *this;
+        }
+        clear();
+        Node* current = other.head;
+        while (current != nullptr) {
+            append(current->data);
+            current = current->next;
+        }
+        return *this;
+    }
+
     // Destructor
     ~LinkedList() {
         clear();

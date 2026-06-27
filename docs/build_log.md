@@ -241,3 +241,20 @@ I checked the loop inside `indexOf`. I had added an `else { return -1; }` block 
 
 **Outcome:**
 I removed the `else` block so it correctly traverses the entire chain before giving up and returning `-1`. Tests pass perfectly! We now have 15 test cases.
+
+---
+
+**Date:** June 27
+**Duration:** 40 minutes
+
+**Goal:**
+Implement Step 10a (LinkedList): Rule of Five Copy Constructor and Copy Assignment Operator for deep copying.
+
+**Problem Encountered:**
+Data Destruction on Self-Assignment. When testing `assigned = assigned;`, the list size dropped to 0 and all data was lost.
+
+**What I Tried:**
+I analyzed `operator=`. The first thing it does is `clear()` the existing list so it can make room for the new elements. Because `assigned` was copying from itself, `clear()` erased the very data it was supposed to copy!
+
+**Outcome:**
+I added a simple `if (this == &other) return *this;` at the beginning of the operator to prevent self-assignment destruction. The deep copy tests now pass, bringing us up to 21 test cases!

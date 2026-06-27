@@ -93,6 +93,34 @@ void test_search() {
     EXPECT_EQ(-1, list.indexOf(999), "Index of 999 is -1");
 }
 
+void test_copy_semantics() {
+    std::cout << "\n--- Testing Copy Semantics ---\n";
+    LinkedList<int> original;
+    original.append(1);
+    original.append(2);
+    original.append(3);
+
+    // Test Copy Constructor
+    LinkedList<int> copied(original);
+    EXPECT_EQ(3, copied.getSize(), "Copied list has correct size");
+    EXPECT_EQ(2, copied.get(1), "Copied list has correct elements");
+    
+    // Modify copy, ensure original is unchanged
+    copied.get(1) = 99;
+    EXPECT_EQ(2, original.get(1), "Original list is unchanged (Deep Copy)");
+
+    // Test Copy Assignment
+    LinkedList<int> assigned;
+    assigned.append(500); // Should be cleared
+    assigned = original;
+    EXPECT_EQ(3, assigned.getSize(), "Assigned list has correct size");
+    EXPECT_EQ(1, assigned.get(0), "Assigned list has correct elements");
+
+    // Test Self-Assignment Bug!
+    assigned = assigned; // BUG WILL TRIGGER HERE!
+    EXPECT_EQ(3, assigned.getSize(), "Self-assigned list should keep its size");
+}
+
 int main() {
     std::cout << "Starting LinkedList Tests...\n";
     
@@ -101,6 +129,7 @@ int main() {
     test_prepend_and_append();
     test_insert_and_remove();
     test_search();
+    test_copy_semantics();
     
     // Print Summary
     std::cout << "\n==============================\n";
