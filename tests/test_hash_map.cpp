@@ -153,6 +153,21 @@ void test_bulk_operations() {
     EXPECT_EQ(250, bulk.get("Key25"), "Key25 is still present");
 }
 
+void test_contains_and_clear() {
+    std::cout << "\n--- Testing Contains & Clear ---\n";
+    HashMap<std::string, int> map;
+    map.put("X", 100);
+    map.put("Y", 200);
+
+    EXPECT_TRUE(map.contains("X"), "Map contains X");
+    EXPECT_TRUE(map.contains("Y"), "Map contains Y");
+    EXPECT_TRUE(!map.contains("Z"), "Map does not contain Z");
+
+    map.clear();
+    EXPECT_EQ(0, map.size(), "Size is 0 after clear");
+    EXPECT_TRUE(!map.contains("X"), "Map does not contain X after clear");
+}
+
 int main() {
     std::cout << "Starting HashMap Tests...\n";
     
@@ -163,6 +178,7 @@ int main() {
     test_resize();
     test_rule_of_zero();
     test_bulk_operations();
+    test_contains_and_clear();
     
     // Print Summary
     std::cout << "\n==============================\n";

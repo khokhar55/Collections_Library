@@ -105,6 +105,22 @@ public:
         }
         // If not found, do nothing
     }
+
+    bool contains(const K& key) {
+        int index = hash(key);
+        LinkedList<KeyValuePair>& bucket = buckets.get(index);
+        for (auto& pair : bucket) {
+            if (pair.key == key) return true;
+        }
+        return false;
+    }
+
+    void clear() {
+        for (int i = 0; i < buckets.capacity(); ++i) {
+            buckets.get(i).clear();
+        }
+        current_size = 0;
+    }
 };
 
 #endif // HASH_MAP_H
