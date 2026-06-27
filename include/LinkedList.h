@@ -147,6 +147,25 @@ public:
         delete current;
         size--;
     }
+
+    bool contains(const T& val) {
+        return indexOf(val) != -1;
+    }
+
+    int indexOf(const T& val) {
+        Node* current = head;
+        int index = 0;
+        while (current != nullptr) {
+            if (current->data == val) {
+                return index;
+            }
+            // FIXED: Removed the else block that was prematurely returning -1!
+            current = current->next;
+            index++;
+        }
+        return -1;
+    }
+
     void clear() {
         Node* current = head;
         while (current != nullptr) {

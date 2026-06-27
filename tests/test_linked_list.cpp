@@ -75,6 +75,24 @@ void test_insert_and_remove() {
     EXPECT_EQ(30, list.get(2), "Element 2 should be 30 after removing 25");
 }
 
+void test_search() {
+    std::cout << "\n--- Testing Search ---\n";
+    LinkedList<int> list;
+    list.append(100);
+    list.append(200);
+    list.append(300);
+
+    // This will pass because 100 is at the head
+    EXPECT_EQ(0, list.indexOf(100), "Index of 100 is 0");
+    EXPECT_TRUE(list.contains(100), "List contains 100");
+
+    // These will fail because of the premature return bug!
+    EXPECT_EQ(1, list.indexOf(200), "Index of 200 is 1");
+    EXPECT_TRUE(list.contains(200), "List contains 200");
+    EXPECT_EQ(2, list.indexOf(300), "Index of 300 is 2");
+    EXPECT_EQ(-1, list.indexOf(999), "Index of 999 is -1");
+}
+
 int main() {
     std::cout << "Starting LinkedList Tests...\n";
     
@@ -82,6 +100,7 @@ int main() {
     test_initial_state();
     test_prepend_and_append();
     test_insert_and_remove();
+    test_search();
     
     // Print Summary
     std::cout << "\n==============================\n";

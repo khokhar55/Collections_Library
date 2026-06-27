@@ -224,3 +224,20 @@ I analyzed the node disconnection logic in `remove(index)`. When removing a midd
 
 **Outcome:**
 I changed it to `prev->next = current->next;` to properly bypass the node being removed before deleting it. All tests pass perfectly now. We have 9 test cases.
+
+---
+
+**Date:** June 27
+**Duration:** 25 minutes
+
+**Goal:**
+Implement Step 9 (LinkedList): Search methods `contains()` and `indexOf()`.
+
+**Problem Encountered:**
+Logic Error / Premature Return. When testing `indexOf(200)` for an item that was in the middle of the list, the test failed and returned `-1` (not found).
+
+**What I Tried:**
+I checked the loop inside `indexOf`. I had added an `else { return -1; }` block inside the loop. This meant if the very first node didn't match the value, the function gave up immediately instead of checking the rest of the list!
+
+**Outcome:**
+I removed the `else` block so it correctly traverses the entire chain before giving up and returning `-1`. Tests pass perfectly! We now have 15 test cases.
