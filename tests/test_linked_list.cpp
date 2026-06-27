@@ -50,12 +50,38 @@ void test_prepend_and_append() {
     EXPECT_EQ(2, list2.getSize(), "Size is 2 after second append");
 }
 
+void test_insert_and_remove() {
+    std::cout << "\n--- Testing Insert & Remove ---\n";
+    LinkedList<int> list;
+    
+    list.append(10);
+    list.append(20);
+    list.append(30);
+    list.append(40);
+    list.append(50);
+    
+    list.insert(2, 25);
+    EXPECT_EQ(6, list.getSize(), "Size is 6 after insert");
+    EXPECT_EQ(25, list.get(2), "Element 2 is 25");
+    
+    // Testing the buggy remove method!
+    // We are trying to remove element at index 2 (value 25)
+    list.remove(2);
+    
+    // Since we accidentally broke the link and deleted the node without bypassing it,
+    // the list now has a dangling pointer.
+    // The next node after 20 (index 1) will be reading from the freed memory of 25!
+    EXPECT_EQ(5, list.getSize(), "Size is 5 after remove");
+    EXPECT_EQ(30, list.get(2), "Element 2 should be 30 after removing 25");
+}
+
 int main() {
     std::cout << "Starting LinkedList Tests...\n";
     
     // Run the tests
     test_initial_state();
     test_prepend_and_append();
+    test_insert_and_remove();
     
     // Print Summary
     std::cout << "\n==============================\n";

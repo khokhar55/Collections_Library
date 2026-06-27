@@ -207,3 +207,20 @@ I traced the state of the list. On the first append, I didn't update `tail`. Sin
 
 **Outcome:**
 Added `tail = newNode;` inside the `if (isEmpty())` block of `append()`. The tests successfully pass now without crashing.
+
+---
+
+**Date:** June 27
+**Duration:** 45 minutes
+
+**Goal:**
+Implement Step 5-6 (LinkedList): `insert()`, `removeFirst()`, `removeLast()`, and `remove()`.
+
+**Problem Encountered:**
+Infinite Loop / Hang / OS Crash. When testing the `remove(index)` method, the test suite completely froze and had to be killed by the OS.
+
+**What I Tried:**
+I analyzed the node disconnection logic in `remove(index)`. When removing a middle node, I wrote `prev->next = current;` and then `delete current;`. This meant I linked the previous node directly to the memory address I was about to free, creating a dangling pointer instead of bypassing it! When `clear()` ran in the destructor, it encountered the dangling pointer and tried to double-free it, corrupting the heap and crashing the program.
+
+**Outcome:**
+I changed it to `prev->next = current->next;` to properly bypass the node being removed before deleting it. All tests pass perfectly now. We have 9 test cases.
